@@ -12,7 +12,7 @@ const getBlogs = async () => {
   );
   return response.data;
 }
-const getBlogById = async (id: number) => {
+const getBlogById = async (id: string) => {
   const response = await axios.get(
     `${import.meta.env.VITE_BACKEND_URL}/blogs/${id}`
   );
@@ -26,7 +26,7 @@ function BlogsView() {
     staleTime: 5 * 60 * 1000 // data become stale after 5 minutes
   });
   const [showBlogsMobile, setShowBlogsMobile] = useState(true);
-  const [currentBlogId, setCurrentBlogId] = useState<number>();
+  const [currentBlogId, setCurrentBlogId] = useState<string>();
   if (blogQuery.isLoading) {
     return <div className="w-full min-h-150 flex px-8 py-4 gap-4 bg-neutral-200">
       <div className="w-1/3">
@@ -45,8 +45,8 @@ function BlogsView() {
   }
   const finalCurrentBlockId = currentBlogId ?? (blogQuery.isFetched && (blogQuery.data ?? []).length > 0 ? blogQuery.data?.at(0)?.id : undefined);
   return (
-    <div className={`flex ${showBlogsMobile===false && "flex-col md:flex-row"} w-full min-h-150 px-2 md:px-8 py-4 gap-2 sm:gap-4 bg-neutral-200`}>
-      {showBlogsMobile===false && <div className="text-lg font-semibold md:hidden underline" onClick={()=>setShowBlogsMobile(true)}>Go Back</div>}
+    <div className={`flex ${showBlogsMobile === false && "flex-col md:flex-row"} w-full min-h-150 px-2 md:px-8 py-4 gap-2 sm:gap-4 bg-neutral-200`}>
+      {showBlogsMobile === false && <div className="text-lg font-semibold md:hidden underline hover:text-blue-500 transition-colors cursor-pointer" onClick={() => setShowBlogsMobile(true)}>Go Back</div>}
       {showBlogsMobile ? <div className="flex w-full md:w-1/3 flex-col gap-4">
         <p className="font-semibold">Latest Blogs</p>
         <div className="flex flex-col gap-1">
@@ -54,7 +54,10 @@ function BlogsView() {
             className={`transition-all duration-200 flex flex-col gap-1 p-2 sm:p-4 border border-neutral-300 bg-white rounded-md ${finalCurrentBlockId === blog.id && "border-l-4 border-l-blue-500"}`}
             onClick={() => { setCurrentBlogId(blog.id); setShowBlogsMobile(false) }}
           >
-            <p className="w-full flex justify-between text-xs"><span className="text-blue-600">{blog.category.join(", ")}</span><span>{formatDistanceToNow(new Date(blog.date), { includeSeconds: false, addSuffix: true })}</span></p>
+            <p className="w-full flex justify-between text-xs">
+              <span className="text-blue-600">{blog.category.join(", ")}</span>
+              <span>{formatDistanceToNow(new Date(blog.date), { includeSeconds: false, addSuffix: true })}</span>
+              </p>
             <p className="font-bold">{blog.title}</p>
             <p className="opacity-80 line-clamp-2">{blog.description}</p>
           </div>)}
@@ -77,7 +80,7 @@ function BlogsView() {
   )
 }
 
-function BlogDetail({ currentBlogId, showBlogsMobile }: { currentBlogId?: number, showBlogsMobile?: boolean }) {
+function BlogDetail({ currentBlogId, showBlogsMobile }: { currentBlogId?: string, showBlogsMobile?: boolean }) {
   const blogDetailQuery = useQuery<Blog>({
     queryKey: ["blog", currentBlogId],
     queryFn: () => getBlogById(currentBlogId!),
@@ -107,7 +110,8 @@ function BlogDetail({ currentBlogId, showBlogsMobile }: { currentBlogId?: number
       <p className="w-full flex flex-col sm:flex-row gap-2 opacity-70">
         <span className="text-blue-600">{blogDetailQuery.data.category.join(", ")}</span>
         <span className="hidden sm:block">•</span>
-        <span>{formatDistanceToNow(new Date(blogDetailQuery.data.date), { includeSeconds: false, addSuffix: true })}</span></p>
+        <span>{formatDistanceToNow(new Date(blogDetailQuery.data.date), { includeSeconds: false, addSuffix: true })}</span>
+      </p>
       <p className="text-2xl md:text-4xl font-bold">{blogDetailQuery.data.title}</p>
       <Button className="flex gap-2 items-center w-50 bg-blue-600 hover:bg-blue-700 hover:scale-105"><Share2 /> Share Blog</Button>
       <p className="opacity-90 text-base md:text-lg">{blogDetailQuery.data.content}</p>

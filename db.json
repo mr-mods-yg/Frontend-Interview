@@ -117,6 +117,17 @@
       "date": "2025-12-10T16:30:00.000Z",
       "coverImage": "https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg",
       "content": "Ethics form the backbone of trust in financial systems. With increased automation and complex instruments, ethical judgment plays a crucial role in decision-making. Short-term gains achieved through unethical practices often lead to long-term damage.\n\nProfessionals must prioritize transparency, integrity, and accountability. Strong ethical frameworks protect not only clients but also the credibility of the profession.\n\nIn an era of rapid change, ethics remain a constant guiding principle."
+    },
+    {
+      "id": "4f32",
+      "title": "a must check blog no offence",
+      "description": "very very very cool blog",
+      "category": [
+        "SPORTS"
+      ],
+      "content": "t is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like).",
+      "coverImage": "https://placehold.co/600x300",
+      "date": "2026-01-19T13:39:16.746Z"
     }
   ]
 }

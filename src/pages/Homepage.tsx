@@ -1,5 +1,4 @@
 import BlogsView from "@/components/BlogsView"
-import FooterSection from "@/sections/FooterSection"
 import HeroSection from "@/sections/HeroSection"
 
 function Homepage() {
@@ -7,7 +6,6 @@ function Homepage() {
     <div className="flex flex-col items-center">
       <HeroSection />
       <BlogsView />
-      <FooterSection/>
     </div>
   )
 }
