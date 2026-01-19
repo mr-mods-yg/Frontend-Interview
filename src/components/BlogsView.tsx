@@ -25,7 +25,7 @@ function BlogsView() {
     queryFn: getBlogs,
     staleTime: 5 * 60 * 1000 // data become stale after 5 minutes
   });
-  
+  const [showBlogsMobile, setShowBlogsMobile] = useState(true);
   const [currentBlogId, setCurrentBlogId] = useState<number>();
   if (blogQuery.isLoading) {
     return <div className="w-full min-h-150 flex px-8 py-4 gap-4 bg-neutral-200">
@@ -45,26 +45,39 @@ function BlogsView() {
   }
   const finalCurrentBlockId = currentBlogId ?? (blogQuery.isFetched && (blogQuery.data ?? []).length > 0 ? blogQuery.data?.at(0)?.id : undefined);
   return (
-    <div className="flex w-full min-h-150 px-2 md:px-8 py-4 gap-2 sm:gap-4 bg-neutral-200">
-      <div className="w-1/3 flex flex-col gap-4">
+    <div className={`flex ${showBlogsMobile===false && "flex-col md:flex-row"} w-full min-h-150 px-2 md:px-8 py-4 gap-2 sm:gap-4 bg-neutral-200`}>
+      {showBlogsMobile===false && <div className="text-lg font-semibold md:hidden underline" onClick={()=>setShowBlogsMobile(true)}>Go Back</div>}
+      {showBlogsMobile ? <div className="flex w-full md:w-1/3 flex-col gap-4">
         <p className="font-semibold">Latest Blogs</p>
         <div className="flex flex-col gap-1">
           {blogQuery.isFetched && blogQuery.data?.map((blog) => <div key={blog.id}
             className={`transition-all duration-200 flex flex-col gap-1 p-2 sm:p-4 border border-neutral-300 bg-white rounded-md ${finalCurrentBlockId === blog.id && "border-l-4 border-l-blue-500"}`}
-            onClick={() => setCurrentBlogId(blog.id)}
+            onClick={() => { setCurrentBlogId(blog.id); setShowBlogsMobile(false) }}
+          >
+            <p className="w-full flex justify-between text-xs"><span className="text-blue-600">{blog.category.join(", ")}</span><span>{formatDistanceToNow(new Date(blog.date), { includeSeconds: false, addSuffix: true })}</span></p>
+            <p className="font-bold">{blog.title}</p>
+            <p className="opacity-80 line-clamp-2">{blog.description}</p>
+          </div>)}
+        </div>
+      </div> : <div className="hidden md:flex w-1/3 flex-col gap-4">
+        <p className="font-semibold">Latest Blogs</p>
+        <div className="flex flex-col gap-1">
+          {blogQuery.isFetched && blogQuery.data?.map((blog) => <div key={blog.id}
+            className={`transition-all duration-200 flex flex-col gap-1 p-2 sm:p-4 border border-neutral-300 bg-white rounded-md ${finalCurrentBlockId === blog.id && "border-l-4 border-l-blue-500"}`}
+            onClick={() => { setCurrentBlogId(blog.id); setShowBlogsMobile(false) }}
           >
             <p className="w-full flex flex-col md:flex-row justify-between text-xs"><span className="text-blue-600">{blog.category.join(", ")}</span><span>{formatDistanceToNow(new Date(blog.date), { includeSeconds: false, addSuffix: true })}</span></p>
             <p className="font-bold">{blog.title}</p>
             <p className="opacity-80 line-clamp-2">{blog.description}</p>
           </div>)}
         </div>
-      </div>
-      <BlogDetail currentBlogId={finalCurrentBlockId} />
+      </div>}
+      <BlogDetail currentBlogId={finalCurrentBlockId} showBlogsMobile={showBlogsMobile} />
     </div>
   )
 }
 
-function BlogDetail({ currentBlogId }: { currentBlogId?: number }) {
+function BlogDetail({ currentBlogId, showBlogsMobile }: { currentBlogId?: number, showBlogsMobile?: boolean }) {
   const blogDetailQuery = useQuery<Blog>({
     queryKey: ["blog", currentBlogId],
     queryFn: () => getBlogById(currentBlogId!),
@@ -73,22 +86,22 @@ function BlogDetail({ currentBlogId }: { currentBlogId?: number }) {
   });
   if (!blogDetailQuery.data) {
     if (blogDetailQuery.isLoading) {
-      return <div className="w-2/3 bg-white rounded-md">
+      return <div className="w-full sm:w-2/3 bg-white rounded-md">
         Loading
       </div>
     }
     if (blogDetailQuery.isError) {
-      return <div className="w-2/3 bg-white rounded-md">
+      return <div className="w-full sm:w-2/3 bg-white rounded-md">
         Error
       </div>
     }
     else {
-      return <div className="w-2/3 bg-white rounded-md">
+      return <div className="w-full sm:w-2/3 bg-white rounded-md">
         Something unexpected happenend. Please refresh the page!
       </div>
     }
   }
-  return <div className="w-2/3 h-fit bg-white rounded-md">
+  return <div className={`${showBlogsMobile && "hidden md:block"} w-full sm:w-2/3 h-fit bg-white rounded-md`}>
     <img src={blogDetailQuery.data.coverImage} alt={blogDetailQuery.data.title + " image"} className="object-cover h-82 w-full rounded-md" />
     <div className="p-4 flex flex-col gap-4">
       <p className="w-full flex flex-col sm:flex-row gap-2 opacity-70">
@@ -112,6 +125,5 @@ function BlogDetail({ currentBlogId }: { currentBlogId?: number }) {
       </div>
     </div>
   </div>
-
 }
 export default BlogsView

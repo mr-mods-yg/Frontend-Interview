@@ -1,15 +1,18 @@
-import BlogsView from "./components/BlogsView"
-import Navbar from "./components/Navbar"
-import HeroSection from "./sections/HeroSection"
-
-
+import { BrowserRouter, Routes, Route } from "react-router";
+import Homepage from "./pages/Homepage";
+import CreateBlog from "./pages/CreateBlog";
+import Navbar from "./components/Navbar";
 function App() {
   return (
-    <div className="flex flex-col items-center font-inter">
-      <Navbar />
-      <HeroSection />
-      <BlogsView />
-    </div>
+    <>
+      <BrowserRouter>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Homepage />} />
+          <Route path="/create-blog" element={<CreateBlog />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   )
 }
 
